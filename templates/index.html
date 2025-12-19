@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Resume Matcher</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 min-h-screen p-10 text-white">
+    <div class="max-w-2xl mx-auto bg-slate-800 p-8 rounded-2xl shadow-2xl border border-slate-700">
+        <h1 class="text-3xl font-bold mb-2 text-blue-400">Resume AI Checker</h1>
+        <p class="text-slate-400 mb-8">Winter Break Project - Giorgi Tsereteli '26</p>
+        
+        <form id="uploadForm" class="space-y-6">
+            <div>
+                <label class="block text-sm font-medium mb-2">Upload Resume (PDF)</label>
+                <input type="file" id="resume" accept=".pdf" required class="w-full bg-slate-700 border border-slate-600 rounded-lg p-2">
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-2">Job Description</label>
+                <textarea id="job_desc" rows="4" required class="w-full bg-slate-700 border border-slate-600 rounded-lg p-2" placeholder="Paste requirements..."></textarea>
+            </div>
+            <button type="submit" id="btn" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-lg font-bold transition">Analyze Match</button>
+        </form>
+
+        <div id="results" class="hidden mt-10 p-6 bg-slate-700 rounded-xl border-l-4 border-blue-500">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold">Match Score</h2>
+                <span id="score" class="text-4xl font-extrabold text-blue-400">0%</span>
+            </div>
+            <div class="mb-4">
+                <h3 class="text-sm uppercase tracking-wider text-slate-400 font-semibold">Missing Keywords</h3>
+                <div id="keywords" class="flex flex-wrap gap-2 mt-2"></div>
+            </div>
+            <div>
+                <h3 class="text-sm uppercase tracking-wider text-slate-400 font-semibold">Career Tip</h3>
+                <p id="tip" class="mt-1 text-slate-200 italic"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn');
+            btn.innerText = "Analyzing... ⚙️";
+            btn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('resume', document.getElementById('resume').files[0]);
+            formData.append('job_description', document.getElementById('job_desc').value);
+
+            const response = await fetch('/analyze', { method: 'POST', body: formData });
+            const data = await response.json();
+
+            // Update UI with results
+            document.getElementById('score').innerText = data.score + "%";
+            document.getElementById('tip').innerText = data.tip;
+            
+            const kwDiv = document.getElementById('keywords');
+            kwDiv.innerHTML = '';
+            data.missing_keywords.forEach(kw => {
+                kwDiv.innerHTML += `<span class="bg-blue-900 text-blue-200 px-3 py-1 rounded-full text-xs font-bold">${kw}</span>`;
+            });
+
+            document.getElementById('results').classList.remove('hidden');
+            btn.innerText = "Analyze Match";
+            btn.disabled = false;
+        };
+    </script>
+</body>
+</html>
