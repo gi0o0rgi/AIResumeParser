@@ -14,7 +14,7 @@ A full-stack web application that uses OpenAI's GPT-4o-mini to analyze resumes a
 - **DevOps:** Virtual Environments (venv), Dotenv
 
 ##  Installation & Setup
-1. Clone the repo: `git clone https://github.com/yourusername/resume-ai-checker`
+1. Clone the repo: `git clone https://github.com/gi0o0rgi/resume-ai-checker`
 2. Create a `.env` file and add your `OPENAI_API_KEY`.
 3. Install dependencies: `pip install -r requirements.txt`
 4. Run the app: `python app.py`
